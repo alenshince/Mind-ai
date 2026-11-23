@@ -36,11 +36,11 @@ export const SAMPLE_NOTES: Note[] = [
     id: "sample-1",
     title: "Hybrid AI Architecture & Firestore Sync",
     tags: ["Architecture", "Firebase", "Gemini"],
-    updatedAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    updatedAt: "2026-11-23T10:00:00.000Z",
     isPinned: true,
     summary: "Blueprints for pairing client-side reactive state with Firestore onSnapshot listeners and Gemini 2.5 Flash for sub-second workspace answers.",
     content: `# Mind AI: Hybrid System Architecture
-
+ 
 ## The Vision
 Mind AI is an intelligent workspace designed for the Google × Firebase #BuildHybridAI 2026 Hackathon. It merges local-first speed with real-time cloud collaboration and contextual AI reasoning.
 
@@ -53,7 +53,7 @@ Mind AI is an intelligent workspace designed for the Google × Firebase #BuildHy
     id: "sample-2",
     title: "Gemini 2.5 Flash Multi-Doc Context Strategy",
     tags: ["Gemini", "AI", "Prompting"],
-    updatedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    updatedAt: "2026-11-23T09:30:00.000Z",
     isPinned: false,
     summary: "Technique for packaging active workspace notes into Gemini's context window without lossy chunking.",
     content: `# Gemini 2.5 Flash Context Integration
@@ -68,7 +68,7 @@ Instead of relying on lossy vector embeddings for personal workspaces, we levera
     id: "sample-3",
     title: "Editorial Design System Guidelines",
     tags: ["Design", "Tailwind", "Typography"],
-    updatedAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+    updatedAt: "2026-11-23T08:00:00.000Z",
     isPinned: false,
     summary: "Dark editorial styling guidelines using Anton and Inter typography.",
     content: `# Mind AI Editorial Design System

@@ -46,16 +46,8 @@ import {
 
 export default function MindAIWorkspace() {
   // --- State Management ---
-  const [notes, setNotes] = useState<Note[]>(() => {
-    if (typeof window !== "undefined") {
-      const cached = localStorage.getItem("mind_ai_notes_v2");
-      if (cached) {
-        try { return JSON.parse(cached); } catch {}
-      }
-    }
-    return SAMPLE_NOTES;
-  });
-
+  const [mounted, setMounted] = useState(false);
+  const [notes, setNotes] = useState<Note[]>(SAMPLE_NOTES);
   const [activeNoteId, setActiveNoteId] = useState<string>(SAMPLE_NOTES[0].id);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -65,6 +57,28 @@ export default function MindAIWorkspace() {
     displayName: "Guest Developer",
     email: "guest@mindai.workspace",
   });
+
+  // Hydrate from localStorage once mounted on client (prevents SSR mismatch)
+  useEffect(() => {
+    setMounted(true);
+    const cached = localStorage.getItem("mind_ai_notes_v2");
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setNotes(parsed);
+          setActiveNoteId(parsed[0]?.id || SAMPLE_NOTES[0].id);
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Sync to local storage only after initial mount
+  useEffect(() => {
+    if (mounted && notes.length > 0) {
+      localStorage.setItem("mind_ai_notes_v2", JSON.stringify(notes));
+    }
+  }, [notes, mounted]);
 
   // New tag input state
   const [newTagInput, setNewTagInput] = useState("");
@@ -89,17 +103,21 @@ export default function MindAIWorkspace() {
   ]);
   const [chatInput, setChatInput] = useState("");
 
+  // Format timestamp safely for SSR/Client
+  const formatTime = (isoString?: string) => {
+    if (!mounted || !isoString) return "10:00 AM";
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return "Recent";
+    }
+  };
+
   // Compute Active Note
   const activeNote = useMemo(() => {
     return notes.find((n) => n.id === activeNoteId) || notes[0] || null;
   }, [notes, activeNoteId]);
-
-  // Sync to local storage
-  useEffect(() => {
-    if (notes.length > 0) {
-      localStorage.setItem("mind_ai_notes_v2", JSON.stringify(notes));
-    }
-  }, [notes]);
 
   // Extract all distinct tags
   const allTags = useMemo(() => {
@@ -463,9 +481,9 @@ export default function MindAIWorkspace() {
                           </span>
                         ))}
                       </div>
-                      <span className="shrink-0 flex items-center gap-1">
+                      <span className="shrink-0 flex items-center gap-1" suppressHydrationWarning>
                         <Clock className="w-2.5 h-2.5" />
-                        {new Date(note.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {formatTime(note.updatedAt)}
                       </span>
                     </div>
                   </div>
